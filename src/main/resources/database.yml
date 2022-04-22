@@ -1,0 +1,6 @@
+spring:
+  datasource:
+    url: jdbc:mysql://localhost/mearound
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: mearound
+    password: mear0und
