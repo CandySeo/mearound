@@ -9,5 +9,4 @@ class MearoundApplicationTests {
 	@Test
 	void contextLoads() {
 	}
-
 }
