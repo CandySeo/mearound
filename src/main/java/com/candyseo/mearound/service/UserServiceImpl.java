@@ -27,7 +27,7 @@ public class UserServiceImpl implements UserService {
     public String regist(User user) {
         
         if (userRepository.findByUserId(user.getUserId()).isPresent()) {
-            return "alreayRegistedUser";
+            throw new IllegalArgumentException("Alredy registed userId `" + user.getUserId() + "`");
         }
 
         UserEntity convert = userMapper.toEntity(user);
@@ -40,9 +40,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public User get(String userId) {
         
-        UserEntity userEntity = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("Unregisted user."));
+        UserEntity userEntity = userRepository.findByUserId(userId).orElseThrow(() -> new IllegalArgumentException("Unregisted user."));
 
-        return userMapper.toDto(userEntity);
+        User user = userMapper.toDto(userEntity);
+
+        return new User(null, user.getUserId(), null, user.getNickname());
     }
     
 }

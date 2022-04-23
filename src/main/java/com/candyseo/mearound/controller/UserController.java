@@ -40,6 +40,6 @@ public class UserController {
 
         log.info("Request to get: id[{}]", id);
         
-        return new User(UUID.randomUUID(), id, "PASSWORD1", "DEVICENAME1");
+        return userService.get(id);
     }
 }
