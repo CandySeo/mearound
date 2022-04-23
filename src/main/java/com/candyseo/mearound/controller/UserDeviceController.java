@@ -25,25 +25,25 @@ public class UserDeviceController {
     
     @PostMapping(value="/{deviceId}", 
                 consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public UserDevice registUserDevice( @PathVariable("userId") String userId,
+    public UserDevice registUserDevice( @PathVariable("userId") UUID userId,
                                         @PathVariable("deviceId") String deviceId) {
 
         log.info("Request to regist: userId[{}], deviceId[{}]", userId, deviceId);
 
         Device userDevice = new Device("DEVICEID1", deviceId, "DEVICENAME1");
 
-        return new UserDevice(new User("USERID1", "PASSWORD1", userId, "USERNAME1"), userDevice, List.of(userDevice));
+        return new UserDevice(new User(userId, "USERID1", "PASSWORD1", "USERNAME1"), userDevice, List.of(userDevice));
     }
     
     @GetMapping(value="/", produces = MediaType.APPLICATION_JSON_VALUE)
-    public UserDevice getUserDevice(@PathVariable("userId") String userId) {
+    public UserDevice getUserDevice(@PathVariable("userId") UUID userId) {
 
         log.info("Request to get: userId[{}]", userId);
 
         Device userDevice = new Device("DEVICEID1", UUID.randomUUID().toString(), "DEVICENAME1");
         Device userDevice2 = new Device("DEVICEID2", UUID.randomUUID().toString(), "DEVICENAME2");
         
-        return new UserDevice(new User("USERID1", "PASSWORD1", userId, "USERNAME1"), userDevice, List.of(userDevice, userDevice2));
+        return new UserDevice(new User(userId, "USERID1", "PASSWORD1", "USERNAME1"), userDevice, List.of(userDevice, userDevice2));
     }
 
 }

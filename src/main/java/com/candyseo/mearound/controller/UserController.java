@@ -3,6 +3,7 @@ package com.candyseo.mearound.controller;
 import java.util.UUID;
 
 import com.candyseo.mearound.model.dto.user.User;
+import com.candyseo.mearound.service.UserService;
 
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,13 +20,19 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/mearound/users")
 public class UserController {
     
+    private UserService userService;
+
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
+
     @PostMapping(value="/", 
                 consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public String registUser(@RequestBody User user) {
 
         log.info("Request to regist: {}", user);
 
-        return UUID.randomUUID().toString();
+        return userService.regist(user);
     }
 
     @GetMapping(value="/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -33,6 +40,6 @@ public class UserController {
 
         log.info("Request to get: id[{}]", id);
         
-        return new User(id, "PASSWORD1", UUID.randomUUID().toString(), "DEVICENAME1");
+        return new User(UUID.randomUUID(), id, "PASSWORD1", "DEVICENAME1");
     }
 }

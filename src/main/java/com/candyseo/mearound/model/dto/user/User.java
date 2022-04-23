@@ -1,5 +1,7 @@
 package com.candyseo.mearound.model.dto.user;
 
+import java.util.UUID;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,11 +13,11 @@ import lombok.ToString;
 @AllArgsConstructor
 public class User {
     
-    private String id;
+    private UUID identifier;
+
+    private String userId;
 
     private String password;
-
-    private String uuid;
 
     private String nickname;
 
