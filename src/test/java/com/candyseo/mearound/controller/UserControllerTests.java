@@ -8,7 +8,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.UUID;
 
+import javax.persistence.EntityNotFoundException;
+
+import com.candyseo.mearound.config.GlobalExceptionHandler;
 import com.candyseo.mearound.config.WebConfiguration;
+import com.candyseo.mearound.exception.DataNotFoundException;
 import com.candyseo.mearound.model.dto.user.User;
 import com.candyseo.mearound.service.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -56,6 +60,7 @@ public class UserControllerTests {
         assertNotNull(userController);
 
         mockMvc = MockMvcBuilders.standaloneSetup(userController)
+                                 .setControllerAdvice(GlobalExceptionHandler.class)
                                  .build();
         
         user = new User(null, "userid1", "password1", "nickname1");
@@ -84,7 +89,7 @@ public class UserControllerTests {
                                               .contentType(MediaType.APPLICATION_JSON_VALUE)
                                               .characterEncoding("utf-8")
                                               .content(mapper.writeValueAsString(user)))
-               .andExpect(status().isInternalServerError())
+               .andExpect(status().isBadRequest())
                .andDo(print());
         
     }
@@ -103,14 +108,14 @@ public class UserControllerTests {
     }
 
     @Test
-    public void ThrowIllegalArgumentExceptionWhenGetUnregistedUser() throws Exception {
+    public void ThrowDataNotFoundExceptionWhenGetUnregistedUser() throws Exception {
 
-        when(userService.get(any(String.class))).thenThrow(IllegalArgumentException.class);
+        when(userService.get(any(String.class))).thenThrow(DataNotFoundException.class);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/mearound/users/" + user.getUserId())
                                               .accept(MediaType.APPLICATION_JSON_VALUE)
                                               .characterEncoding("utf-8"))
-               .andExpect(status().isOk())
+               .andExpect(status().isNoContent())
                .andDo(print());
         
     }

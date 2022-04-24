@@ -1,5 +1,6 @@
 package com.candyseo.mearound.service;
 
+import com.candyseo.mearound.exception.DataNotFoundException;
 import com.candyseo.mearound.model.dto.user.User;
 import com.candyseo.mearound.model.entity.user.UserEntity;
 import com.candyseo.mearound.model.mapper.UserMapper;
@@ -40,7 +41,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User get(String userId) {
         
-        UserEntity userEntity = userRepository.findByUserId(userId).orElseThrow(() -> new IllegalArgumentException("Unregisted user."));
+        UserEntity userEntity = userRepository.findByUserId(userId).orElseThrow(() -> new DataNotFoundException("Unregisted user."));
 
         User user = userMapper.toDto(userEntity);
 
