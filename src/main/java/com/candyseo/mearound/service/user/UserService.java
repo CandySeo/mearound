@@ -1,4 +1,4 @@
-package com.candyseo.mearound.service;
+package com.candyseo.mearound.service.user;
 
 import com.candyseo.mearound.model.dto.user.User;
 

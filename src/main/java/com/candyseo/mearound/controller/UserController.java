@@ -3,7 +3,7 @@ package com.candyseo.mearound.controller;
 import java.util.UUID;
 
 import com.candyseo.mearound.model.dto.user.User;
-import com.candyseo.mearound.service.UserService;
+import com.candyseo.mearound.service.user.UserService;
 
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;

@@ -13,7 +13,7 @@ import lombok.ToString;
 @AllArgsConstructor
 public class Device {
 
-    private String uuid;
+    private String identifier;
     
     private String id;
 

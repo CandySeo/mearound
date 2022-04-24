@@ -9,11 +9,6 @@ import org.springframework.stereotype.Component;
 public class UserMapper implements GenericMapper<User, UserEntity> {
 
     @Override
-    public UserEntity convert(User source) {
-        return toEntity(source);
-    }
-
-    @Override
     public User toDto(UserEntity entity) throws IllegalArgumentException {
         if (entity.getIdentifier() == null) {
             throw new IllegalArgumentException("Entity `identifier` should be not null.");

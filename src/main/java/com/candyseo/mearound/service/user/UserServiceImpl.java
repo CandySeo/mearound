@@ -1,10 +1,10 @@
-package com.candyseo.mearound.service;
+package com.candyseo.mearound.service.user;
 
 import com.candyseo.mearound.exception.DataNotFoundException;
 import com.candyseo.mearound.model.dto.user.User;
 import com.candyseo.mearound.model.entity.user.UserEntity;
 import com.candyseo.mearound.model.mapper.UserMapper;
-import com.candyseo.mearound.repository.UserRepository;
+import com.candyseo.mearound.repository.user.UserRepository;
 
 import org.springframework.stereotype.Service;
 

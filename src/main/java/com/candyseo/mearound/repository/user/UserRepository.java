@@ -1,4 +1,4 @@
-package com.candyseo.mearound.repository;
+package com.candyseo.mearound.repository.user;
 
 import java.util.Optional;
 

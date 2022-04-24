@@ -7,4 +7,9 @@ public interface GenericMapper<D, E> extends Converter<D, E> {
     D toDto(E entity);
     E toEntity(D dto);
 
+    @Override
+    default E convert(D source) {
+        return toEntity(source);
+    }
+
 }

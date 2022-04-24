@@ -14,7 +14,7 @@ import com.candyseo.mearound.config.GlobalExceptionHandler;
 import com.candyseo.mearound.config.WebConfiguration;
 import com.candyseo.mearound.exception.DataNotFoundException;
 import com.candyseo.mearound.model.dto.user.User;
-import com.candyseo.mearound.service.UserService;
+import com.candyseo.mearound.service.user.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
