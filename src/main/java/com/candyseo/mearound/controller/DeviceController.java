@@ -3,6 +3,7 @@ package com.candyseo.mearound.controller;
 import java.util.UUID;
 
 import com.candyseo.mearound.model.dto.device.Device;
+import com.candyseo.mearound.service.device.DeviceService;
 
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,13 +20,19 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/mearound/devices")
 public class DeviceController {
     
+    private DeviceService deviceService;
+
+    public DeviceController(DeviceService deviceService) {
+        this.deviceService = deviceService;
+    }
+
     @PostMapping(value="/", 
                 consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public String registDevice(@RequestBody Device device) {
 
         log.info("Request to regist: {}", device);
 
-        return UUID.randomUUID().toString();
+        return deviceService.regist(device);
     }
 
     @GetMapping(value="/{deviceId}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -33,7 +40,7 @@ public class DeviceController {
 
         log.info("Request to get: id[{}]", id);
         
-        return new Device(UUID.randomUUID().toString(), "DEVICEID1", "DEVICENAME1");
+        return deviceService.get(id);
     }
 
 }

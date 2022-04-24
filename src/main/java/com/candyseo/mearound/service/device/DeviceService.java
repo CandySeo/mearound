@@ -6,6 +6,6 @@ public interface DeviceService {
     
     public String regist(Device device);
 
-    public Device get(Device id);
+    public Device get(String identifier);
 
 }
