@@ -105,6 +105,6 @@ public class UserDeviceServiceTests {
         UserDevice userDevice = userDeviceService.getUserDevice(userIdentifier);
 
         assertEquals(userDevice.getUser().getIdentifier().toString(), userIdentifier);
-        assertEquals(userDevice.getDeivces().size(), 1);
+        assertEquals(userDevice.getDevices().size(), 1);
     }
 }

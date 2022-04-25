@@ -1,6 +1,7 @@
 package com.candyseo.mearound.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anySet;
@@ -66,13 +67,14 @@ public class UserDeviceServiceTests2 {
         when(userDeviceRepository.findByDeviceIdAndIsActive(any(String.class), any(boolean.class))).thenReturn(Optional.empty());
         when(userDeviceRepository.findByUserId(any(String.class))).thenReturn(List.of());
         when(userDeviceRepository.save(any(UserDeviceEntity.class))).thenReturn(entity);
-        when(deviceService.findAll(anySet())).thenReturn(List.of(device));
         when(userService.get(any(String.class))).thenReturn(user);
+        when(deviceService.get(any(String.class))).thenReturn(device);
+        when(deviceService.findAll(anySet())).thenReturn(List.of(device));
         
         UserDevice userDevice = userDeviceService.setUserActiveDevice(userIdentifier, deviceIdentifier);
 
         assertEquals(userDevice.getUser().getUserId(), user.getUserId());
-        assertEquals(userDevice.getDeivces().size(), 1);
+        assertEquals(userDevice.getDevices().size(), 1);
         assertEquals(userDevice.getActiveDevice().getId(), device.getId());
     }
     
@@ -86,6 +88,36 @@ public class UserDeviceServiceTests2 {
         assertThrows(IllegalArgumentException.class, () -> {
             userDeviceService.setUserActiveDevice(userIdentifier, deviceIdentifier);
         });
+        
+    }
+    
+    @Test
+    public void throwIllegalArgumentExceptionWhenSetUnregistedDevice() {
+
+        UserDeviceEntity entity = new UserDeviceEntity(userIdentifier, deviceIdentifier, true);
+        
+        when(userDeviceRepository.findByDeviceIdAndIsActive(any(String.class), any(boolean.class))).thenReturn(Optional.empty());
+        when(deviceService.get(any(String.class))).thenThrow(IllegalArgumentException.class);
+        
+        assertThrows(IllegalArgumentException.class, () -> {
+            userDeviceService.setUserActiveDevice(userIdentifier, deviceIdentifier);
+        });
+        
+    }
+
+    @Test
+    public void throwDataNotFoundExceptionWhenSetUnregistedDevice() {
+
+        UserDeviceEntity entity = new UserDeviceEntity(userIdentifier, deviceIdentifier, true);
+        
+        when(userDeviceRepository.findByDeviceIdAndIsActive(any(String.class), any(boolean.class))).thenReturn(Optional.empty());
+        when(deviceService.get(any(String.class))).thenThrow(DataNotFoundException.class);
+        
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> {
+            userDeviceService.setUserActiveDevice(userIdentifier, deviceIdentifier);
+        });
+
+        assertInstanceOf(DataNotFoundException.class, e.getCause());
         
     }
 
@@ -102,7 +134,7 @@ public class UserDeviceServiceTests2 {
         UserDevice userDevice = userDeviceService.getUserDevice(userIdentifier);
         
         assertEquals(userDevice.getUser().getUserId(), user.getUserId());
-        assertEquals(userDevice.getDeivces().size(), 1);
+        assertEquals(userDevice.getDevices().size(), 1);
         assertEquals(userDevice.getActiveDevice().getId(), device.getId());
     }
         

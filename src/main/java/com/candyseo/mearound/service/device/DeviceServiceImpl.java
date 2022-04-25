@@ -4,7 +4,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import com.candyseo.mearound.exception.DataNotFoundException;
 import com.candyseo.mearound.model.dto.device.Device;
@@ -40,6 +39,7 @@ public class DeviceServiceImpl implements DeviceService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Device get(String identifier) {
         
         DeviceEntity registed = deviceRepository.findById(UUID.fromString(identifier)).orElseThrow(

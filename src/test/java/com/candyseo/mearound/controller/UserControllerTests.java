@@ -8,8 +8,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.UUID;
 
-import javax.persistence.EntityNotFoundException;
-
 import com.candyseo.mearound.config.GlobalExceptionHandler;
 import com.candyseo.mearound.config.WebConfiguration;
 import com.candyseo.mearound.exception.DataNotFoundException;

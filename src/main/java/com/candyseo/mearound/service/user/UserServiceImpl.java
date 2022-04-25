@@ -21,7 +21,7 @@ public class UserServiceImpl implements UserService {
     private UserRepository userRepository;
 
     public UserServiceImpl(UserMapper userMapper,
-                            UserRepository userRepository) {
+                           UserRepository userRepository) {
         this.userMapper = userMapper;
         this.userRepository = userRepository;
     }

@@ -17,6 +17,6 @@ public class UserDevice {
 
     private Device activeDevice;
 
-    private List<Device> deivces;
+    private List<Device> devices;
 
 }

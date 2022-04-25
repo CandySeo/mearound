@@ -11,9 +11,9 @@ import com.candyseo.mearound.model.dto.user.UserDevice;
 import com.candyseo.mearound.model.entity.user.UserDeviceEntity;
 import com.candyseo.mearound.repository.user.UserDeviceRepository;
 import com.candyseo.mearound.service.device.DeviceService;
+import com.candyseo.mearound.util.UuidUtils;
 
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.extern.slf4j.Slf4j;
@@ -40,10 +40,19 @@ public class UserDeviceServiceImpl implements UserDeviceService {
     @Transactional
     public UserDevice setUserActiveDevice(String userIdentifier, String deviceIdentifier) {
         
+        if (!UuidUtils.isUuidFormat(userIdentifier)) {
+            throw new IllegalArgumentException("UserIdentifier `" + userIdentifier + "` not uuid format.");
+        }
+
+        if (!UuidUtils.isUuidFormat(deviceIdentifier)) {
+            throw new IllegalArgumentException("DeviceIdentifier `" + deviceIdentifier + "` not uuid format.");
+        }
+
         if (userDeviceRepository.findByDeviceIdAndIsActive(deviceIdentifier, true).isPresent()) {
             throw new IllegalArgumentException("Device `" + deviceIdentifier + "` is already use.");
         }
 
+        UserDeviceEntity activeUserDeviceEntity = null;
         List<UserDeviceEntity> userDevices = userDeviceRepository.findByUserId(userIdentifier);
         for (UserDeviceEntity userDevice: userDevices) {
 
@@ -55,20 +64,49 @@ public class UserDeviceServiceImpl implements UserDeviceService {
             if (userDevice.getDeviceId().equals(deviceIdentifier)) {
                 userDevice.setIsActive(true);
                 userDeviceRepository.save(userDevice);
+                activeUserDeviceEntity = userDevice;
             }
         }
 
-        UserDeviceEntity newUserDevice = userDeviceRepository.save(new UserDeviceEntity(userIdentifier, deviceIdentifier, true));
-        log.info("Registed new user device: {}", newUserDevice);
+        if (activeUserDeviceEntity == null) {
+            activeUserDeviceEntity = userDeviceRepository.save(new UserDeviceEntity(userIdentifier, deviceIdentifier, true));
+        }
 
-        // return new UserDevice(userService.get(userIdentifier), deviceIdentifier, Set.of(e1));
+        log.info("Registed user device: {}", activeUserDeviceEntity);
 
-        return makeUserDevice(userIdentifier, deviceIdentifier, userDevices.stream().map(u -> u.getDeviceId()).collect(Collectors.toSet()));
+        Set<String> deviceIdentifiers = userDevices.stream().map(u -> u.getDeviceId()).collect(Collectors.toSet());
+        deviceIdentifiers.add(deviceIdentifier);
+
+        try {
+            User user = userService.get(userIdentifier);
+            Device activeDevice = deviceService.get(deviceIdentifier);
+            List<Device> devices = deviceService.findAll(deviceIdentifiers);
+            
+            return new UserDevice(user, activeDevice, devices);
+        } catch(Exception e) {
+            throw new IllegalArgumentException(e);
+        }
+
+        // return new UserDevice(user, activeDevice, devices);
+        // return makeUserDevice(userIdentifier, deviceIdentifier, userDevices.stream().map(u -> u.getDeviceId()).collect(Collectors.toSet()));
+    }
+
+    private UserDevice makeUserDevice(String userIdentifier, String activeDeviceIdentifier, Set<String> deviceIdentifiers) {
+
+        User user = userService.get(userIdentifier);
+        Device activeDevice = deviceService.get(activeDeviceIdentifier);
+        List<Device> devices = deviceService.findAll(deviceIdentifiers);
+
+        return new UserDevice(user, activeDevice, devices);
     }
 
     @Override
     @Transactional(readOnly = true)
     public UserDevice getUserDevice(String userIdentifier) {
+
+        if (!UuidUtils.isUuidFormat(userIdentifier)) {
+            throw new IllegalArgumentException("UserIdentifier `" + userIdentifier + "` not uuid format.");
+        }
 
         List<UserDeviceEntity> userDevices = userDeviceRepository.findByUserId(userIdentifier);
 
@@ -97,17 +135,4 @@ public class UserDeviceServiceImpl implements UserDeviceService {
         return new UserDevice(userService.get(userIdentifier), activeDevice, devices);
     }
     
-    private UserDevice makeUserDevice(String userIdentifier, String activeDeviceIdentifier, Set<String> deviceIds) {
-
-        List<Device> devices = deviceService.findAll(deviceIds);
-
-        Device activeDevice = null;
-        for (Device device: devices) {
-            if (device.getIdentifier().equals(activeDeviceIdentifier)) {
-                activeDevice = device;
-            }
-        }
-
-        return new UserDevice(userService.get(userIdentifier), activeDevice, devices);
-    }
 }
