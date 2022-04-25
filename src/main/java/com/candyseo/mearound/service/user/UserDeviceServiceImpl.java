@@ -58,10 +58,9 @@ public class UserDeviceServiceImpl implements UserDeviceService {
             }
         }
 
-        UserDeviceEntity newDevice = new UserDeviceEntity(userIdentifier, deviceIdentifier, true);
-        UserDeviceEntity newUserDevice = userDeviceRepository.save(newDevice);        
-        
+        UserDeviceEntity newUserDevice = userDeviceRepository.save(new UserDeviceEntity(userIdentifier, deviceIdentifier, true));
         log.info("Registed new user device: {}", newUserDevice);
+
         return newUserDevice != null;
     }
 
@@ -82,7 +81,6 @@ public class UserDeviceServiceImpl implements UserDeviceService {
             }
         }
 
-        // todo.
         List<Device> devices = deviceService.findAll(userDevices.stream()
                                                                 .map(e -> e.getDeviceId())
                                                                 .collect(Collectors.toSet()));

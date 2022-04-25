@@ -10,8 +10,6 @@ import com.candyseo.mearound.config.WebConfiguration;
 import com.candyseo.mearound.model.dto.device.Device;
 import com.candyseo.mearound.model.dto.user.User;
 import com.candyseo.mearound.model.dto.user.UserDevice;
-import com.candyseo.mearound.model.entity.key.UserDeviceEntityKey;
-import com.candyseo.mearound.model.entity.user.UserDeviceEntity;
 import com.candyseo.mearound.model.mapper.DeviceMapper;
 import com.candyseo.mearound.model.mapper.UserMapper;
 import com.candyseo.mearound.repository.device.DeviceRepository;
@@ -24,6 +22,7 @@ import com.candyseo.mearound.service.user.UserService;
 import com.candyseo.mearound.service.user.UserServiceImpl;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +32,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 
+@Disabled("Instead use UserDeviceServiceTests2.class")
 @ActiveProfiles("test")
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = WebConfiguration.class)
@@ -84,19 +84,6 @@ public class UserDeviceServiceTests {
 
         assertTrue(result);
     }
-
-    @Test
-    @Transactional
-    public void userDeviceRepositoryTests() {
-        String userIdentifier = UUID.randomUUID().toString();
-        String deviceIdentifier = UUID.randomUUID().toString();
-
-        UserDeviceEntity registed = userDeviceRepository.save(new UserDeviceEntity(userIdentifier, deviceIdentifier, true));
-        UserDeviceEntity search = userDeviceRepository.getById(new UserDeviceEntityKey(registed.getUserId(), registed.getDeviceId()));
-
-        assertEquals(registed, search);
-    }
-
 
     @Test
     @Transactional
