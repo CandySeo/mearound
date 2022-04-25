@@ -1,10 +1,11 @@
 package com.candyseo.mearound.model.mapper;
 
-import java.util.UUID;
-
 import com.candyseo.mearound.model.dto.device.Device;
 import com.candyseo.mearound.model.entity.device.DeviceEntity;
 
+import org.springframework.stereotype.Component;
+
+@Component
 public class DeviceMapper implements GenericMapper<Device, DeviceEntity> {
 
     @Override
@@ -14,7 +15,11 @@ public class DeviceMapper implements GenericMapper<Device, DeviceEntity> {
 
     @Override
     public DeviceEntity toEntity(Device dto) {
-        return new DeviceEntity(UUID.fromString(dto.getIdentifier()), dto.getId(), dto.getName());
+
+        return DeviceEntity.builder()
+                           .deviceId(dto.getId())
+                           .name(dto.getName())
+                           .build();
     }
     
 }

@@ -1,6 +1,15 @@
 package com.candyseo.mearound.model.entity.user;
 
-import com.candyseo.mearound.model.entity.device.DeviceEntity;
+import java.io.Serializable;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.IdClass;
+import javax.persistence.Table;
+
+import com.candyseo.mearound.model.entity.common.BaseDateTimeEntity;
+import com.candyseo.mearound.model.entity.key.UserDeviceEntityKey;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,10 +20,23 @@ import lombok.ToString;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserDeviceEntity {
+@Entity
+@Table(name = "user_devices")
+@IdClass(value = UserDeviceEntityKey.class)
+public class UserDeviceEntity extends BaseDateTimeEntity implements Serializable {
     
-    private UserEntity user;
+    @Id
+    @Column(name = "user_id", nullable = false, updatable = false, length = 36)
+    private String userId;
 
-    private DeviceEntity deivces;
+    @Id
+    @Column(name = "device_id", nullable = false, updatable = false, length = 36)
+    private String deviceId;
 
+    @Column(name = "is_active", nullable = false)
+    private boolean isActive;
+
+    public void setIsActive(boolean isActive) {
+        this.isActive = isActive;
+    }
 }

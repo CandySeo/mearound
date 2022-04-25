@@ -1,5 +1,11 @@
 package com.candyseo.mearound.service.device;
 
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
 import com.candyseo.mearound.exception.DataNotFoundException;
 import com.candyseo.mearound.model.dto.device.Device;
 import com.candyseo.mearound.model.entity.device.DeviceEntity;
@@ -7,6 +13,7 @@ import com.candyseo.mearound.model.mapper.DeviceMapper;
 import com.candyseo.mearound.repository.device.DeviceRepository;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class DeviceServiceImpl implements DeviceService {
@@ -35,11 +42,25 @@ public class DeviceServiceImpl implements DeviceService {
     @Override
     public Device get(String identifier) {
         
-        DeviceEntity registed = deviceRepository.findById(identifier).orElseThrow(
+        DeviceEntity registed = deviceRepository.findById(UUID.fromString(identifier)).orElseThrow(
             () -> new DataNotFoundException("Not found device by identifier`" + identifier + "`")
         );
 
         return deviceMapper.toDto(registed);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Device> findAll(Set<String> identifiers) {
+
+        List<Device> devices = new LinkedList<>();
+        for (String id : identifiers) {
+            deviceRepository.findById(UUID.fromString(id)).ifPresent(entity -> {
+                devices.add(deviceMapper.toDto(entity));
+            });
+        }
+        
+        return devices;
     }
     
 }

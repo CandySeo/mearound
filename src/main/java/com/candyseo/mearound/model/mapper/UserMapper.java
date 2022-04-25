@@ -14,7 +14,11 @@ public class UserMapper implements GenericMapper<User, UserEntity> {
             throw new IllegalArgumentException("Entity `identifier` should be not null.");
         }
 
-        return new User(entity.getIdentifier(), entity.getUserId(), entity.getPassword(), entity.getNickname());
+        return User.builder()
+                   .identifier(entity.getIdentifier())
+                   .userId(entity.getUserId())
+                   .nickname(entity.getNickname())
+                   .build();
     }
 
     @Override
@@ -31,7 +35,12 @@ public class UserMapper implements GenericMapper<User, UserEntity> {
             throw new IllegalArgumentException("`nickname` should be not null.");
         }
 
-        return new UserEntity(dto.getIdentifier(), dto.getUserId(), dto.getPassword(), dto.getNickname());
+        return UserEntity.builder()
+                         .identifier(dto.getIdentifier())
+                         .userId(dto.getUserId())
+                         .password(dto.getPassword())
+                         .nickname(dto.getNickname())
+                         .build();
     }
     
 }

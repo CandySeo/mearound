@@ -6,5 +6,7 @@ public interface UserService {
     
     String regist(User user);
 
-    User get(String userId);
+    User get(String identifier);
+
+    User getByUserId(String userId);
 }

@@ -40,6 +40,6 @@ public class UserController {
 
         log.info("Request to get: id[{}]", id);
         
-        return userService.get(id);
+        return userService.getByUserId(id);
     }
 }

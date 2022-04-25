@@ -9,37 +9,43 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import com.candyseo.mearound.model.entity.common.BaseTimeEntity;
+import com.candyseo.mearound.model.entity.common.BaseDateTimeEntity;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.domain.Persistable;
 
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.NonNull;
 import lombok.ToString;
 
 @Getter
-@Setter
 @ToString
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Entity
 @Table(name = "devices")
-public class DeviceEntity extends BaseTimeEntity implements Persistable<UUID> {
+public class DeviceEntity extends BaseDateTimeEntity implements Persistable<UUID> {
 
     @Id
     @Column(nullable = false, updatable = false, length = 36)
     @GeneratedValue(generator = "UUID")
     @GenericGenerator(
         name = "UUID", 
-        strategy = "org.hibernate.id.UUIDGenerato"
+        strategy = "org.hibernate.id.UUIDGenerator"
     )
     private UUID identifier;
     
     @Column 
+    @NonNull
     private String deviceId;
 
     @Column
+    @NonNull
     private String name;
 
     @Transient
@@ -53,11 +59,5 @@ public class DeviceEntity extends BaseTimeEntity implements Persistable<UUID> {
     @Override
     public boolean isNew() {
         return this.isNew;
-    }
-
-    public DeviceEntity(UUID identifier, String id, String name) {
-        this.identifier = identifier;
-        this.deviceId = id;
-        this.name = name;
     }
 }

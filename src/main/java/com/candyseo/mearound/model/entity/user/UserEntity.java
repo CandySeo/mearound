@@ -9,22 +9,27 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import com.candyseo.mearound.model.entity.common.BaseTimeEntity;
+import com.candyseo.mearound.model.entity.common.BaseDateTimeEntity;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.domain.Persistable;
 
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
+import lombok.NonNull;
 import lombok.ToString;
 
 @Getter
 @ToString
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Entity
 @Table(name = "users")
-public class UserEntity extends BaseTimeEntity implements Persistable<UUID> {
+public class UserEntity extends BaseDateTimeEntity implements Persistable<UUID> {
     
     @Id
     @Column(nullable = false, updatable = false, length = 36)
@@ -36,12 +41,15 @@ public class UserEntity extends BaseTimeEntity implements Persistable<UUID> {
     private UUID identifier;
 
     @Column(name = "user_id", nullable = false, unique = true, length = 36)
+    @NonNull
     private String userId;
 
     @Column(nullable = false)
+    @NonNull
     private String password;
 
     @Column(nullable = false, length = 12)
+    @NonNull
     private String nickname;
 
     @Transient
@@ -55,13 +63,6 @@ public class UserEntity extends BaseTimeEntity implements Persistable<UUID> {
     @Override
     public boolean isNew() {
         return this.isNew;
-    }
-
-    public UserEntity(UUID identifier, String userId, String password, String nickname) {
-        this.identifier = identifier;
-        this.userId = userId;
-        this.password = password;
-        this.nickname = nickname;
     }
 
 }

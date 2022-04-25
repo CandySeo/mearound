@@ -24,7 +24,7 @@ public class UserMapperTests {
     @Test
     public void returnUserEntityWhenToEntityGivenUserDtoTest() {
 
-        User user = new User(null, "USERID01", "PASSWORD01", "NICKNAME01");
+        User user = new User("USERID01", "PASSWORD01", "NICKNAME01");
         UserEntity userEntity = userMapper.toEntity(user);
 
         assertNotNull(userEntity);
@@ -35,9 +35,9 @@ public class UserMapperTests {
     @Test
     public void throwIllegalArgumentExceptionWhenToEntityGivenNullValue() {
         
-        User user1 = new User(null, null, "PASSWORD01", "NICKNAME01");
-        User user2 = new User(null, "USERID02", null, "NICKNAME02");
-        User user3 = new User(null, "USERID03", "PASSWORD03", null);
+        User user1 = new User(null, "PASSWORD01", "NICKNAME01");
+        User user2 = new User("USERID02", null, "NICKNAME02");
+        User user3 = new User("USERID03", "PASSWORD03", null);
 
         
         assertThrows(IllegalArgumentException.class, () -> {
@@ -56,7 +56,13 @@ public class UserMapperTests {
     @Test
     public void retuenUserDtoWhenToDtoGivenUserEntityTest() {
 
-        UserEntity userEntity = new UserEntity(UUID.randomUUID(), "USERID01", "PASSWORD01", "NICKNAME01");
+        UserEntity userEntity = UserEntity.builder()
+                                          .identifier(UUID.randomUUID())
+                                          .userId("USERID01")
+                                          .password("PASSWORD01")
+                                          .nickname("NICKNAME01")
+                                          .build();
+        
         User user = userMapper.toDto(userEntity);
 
         assertNotNull(user);
@@ -67,7 +73,11 @@ public class UserMapperTests {
     @Test
     public void throwIllegalArgumentExceptionWhenToDtoGivenNullIdentifier() {
 
-        UserEntity userEntity = new UserEntity(null, "USERID01", "PASSWORD01", "NICKNAME01");
+        UserEntity userEntity = UserEntity.builder()
+                                          .userId("USERID01")
+                                          .password("PASSWORD01")
+                                          .nickname("NICKNAME01")
+                                          .build();
 
         assertThrows(IllegalArgumentException.class, () -> {
             userMapper.toDto(userEntity);

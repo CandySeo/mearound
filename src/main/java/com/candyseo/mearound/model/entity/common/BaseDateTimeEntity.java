@@ -14,7 +14,7 @@ import lombok.ToString;
 @ToString
 @EntityListeners(value = AuditingEntityListener.class)
 @MappedSuperclass
-public class BaseTimeEntity {
+public class BaseDateTimeEntity {
     
     private LocalDateTime regiatedDateTime;
 

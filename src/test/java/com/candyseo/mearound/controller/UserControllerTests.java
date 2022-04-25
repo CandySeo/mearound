@@ -97,7 +97,7 @@ public class UserControllerTests {
     @Test
     public void returnUserWhenGetRegistedUser() throws Exception {
 
-        when(userService.get(any(String.class))).thenReturn(user);
+        when(userService.getByUserId(any(String.class))).thenReturn(user);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/mearound/users/" + user.getUserId())
                                               .accept(MediaType.APPLICATION_JSON_VALUE)
@@ -110,7 +110,7 @@ public class UserControllerTests {
     @Test
     public void ThrowDataNotFoundExceptionWhenGetUnregistedUser() throws Exception {
 
-        when(userService.get(any(String.class))).thenThrow(DataNotFoundException.class);
+        when(userService.getByUserId(any(String.class))).thenThrow(DataNotFoundException.class);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/mearound/users/" + user.getUserId())
                                               .accept(MediaType.APPLICATION_JSON_VALUE)
