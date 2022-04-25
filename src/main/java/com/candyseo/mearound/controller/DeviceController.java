@@ -1,7 +1,5 @@
 package com.candyseo.mearound.controller;
 
-import java.util.UUID;
-
 import com.candyseo.mearound.model.dto.device.Device;
 import com.candyseo.mearound.service.device.DeviceService;
 

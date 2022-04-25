@@ -2,7 +2,6 @@ package com.candyseo.mearound.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anySet;
 import static org.mockito.Mockito.when;
@@ -62,14 +61,19 @@ public class UserDeviceServiceTests2 {
     public void returnTrueWhenSetUserDevice() {
 
         UserDeviceEntity entity = new UserDeviceEntity(userIdentifier, deviceIdentifier, true);
+        Device device = new Device(deviceIdentifier, "DEVICEID1", "DEVICENAME1");
 
         when(userDeviceRepository.findByDeviceIdAndIsActive(any(String.class), any(boolean.class))).thenReturn(Optional.empty());
         when(userDeviceRepository.findByUserId(any(String.class))).thenReturn(List.of());
         when(userDeviceRepository.save(any(UserDeviceEntity.class))).thenReturn(entity);
+        when(deviceService.findAll(anySet())).thenReturn(List.of(device));
+        when(userService.get(any(String.class))).thenReturn(user);
         
-        boolean result = userDeviceService.setUserActiveDevice(userIdentifier, deviceIdentifier);
+        UserDevice userDevice = userDeviceService.setUserActiveDevice(userIdentifier, deviceIdentifier);
 
-        assertTrue(result);
+        assertEquals(userDevice.getUser().getUserId(), user.getUserId());
+        assertEquals(userDevice.getDeivces().size(), 1);
+        assertEquals(userDevice.getActiveDevice().getId(), device.getId());
     }
     
     @Test

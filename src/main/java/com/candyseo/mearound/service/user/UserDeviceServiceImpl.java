@@ -1,6 +1,7 @@
 package com.candyseo.mearound.service.user;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.candyseo.mearound.exception.DataNotFoundException;
@@ -12,6 +13,7 @@ import com.candyseo.mearound.repository.user.UserDeviceRepository;
 import com.candyseo.mearound.service.device.DeviceService;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.extern.slf4j.Slf4j;
@@ -36,7 +38,7 @@ public class UserDeviceServiceImpl implements UserDeviceService {
 
     @Override
     @Transactional
-    public boolean setUserActiveDevice(String userIdentifier, String deviceIdentifier) {
+    public UserDevice setUserActiveDevice(String userIdentifier, String deviceIdentifier) {
         
         if (userDeviceRepository.findByDeviceIdAndIsActive(deviceIdentifier, true).isPresent()) {
             throw new IllegalArgumentException("Device `" + deviceIdentifier + "` is already use.");
@@ -53,15 +55,15 @@ public class UserDeviceServiceImpl implements UserDeviceService {
             if (userDevice.getDeviceId().equals(deviceIdentifier)) {
                 userDevice.setIsActive(true);
                 userDeviceRepository.save(userDevice);
-
-                return true;
             }
         }
 
         UserDeviceEntity newUserDevice = userDeviceRepository.save(new UserDeviceEntity(userIdentifier, deviceIdentifier, true));
         log.info("Registed new user device: {}", newUserDevice);
 
-        return newUserDevice != null;
+        // return new UserDevice(userService.get(userIdentifier), deviceIdentifier, Set.of(e1));
+
+        return makeUserDevice(userIdentifier, deviceIdentifier, userDevices.stream().map(u -> u.getDeviceId()).collect(Collectors.toSet()));
     }
 
     @Override
@@ -95,4 +97,17 @@ public class UserDeviceServiceImpl implements UserDeviceService {
         return new UserDevice(userService.get(userIdentifier), activeDevice, devices);
     }
     
+    private UserDevice makeUserDevice(String userIdentifier, String activeDeviceIdentifier, Set<String> deviceIds) {
+
+        List<Device> devices = deviceService.findAll(deviceIds);
+
+        Device activeDevice = null;
+        for (Device device: devices) {
+            if (device.getIdentifier().equals(activeDeviceIdentifier)) {
+                activeDevice = device;
+            }
+        }
+
+        return new UserDevice(userService.get(userIdentifier), activeDevice, devices);
+    }
 }

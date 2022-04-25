@@ -80,9 +80,9 @@ public class UserDeviceServiceTests {
         assertNotNull(userIdentifier);
         assertNotNull(deviceIdentifier);
 
-        boolean result = userDeviceService.setUserActiveDevice(userIdentifier, deviceIdentifier);
+        UserDevice result = userDeviceService.setUserActiveDevice(userIdentifier, deviceIdentifier);
 
-        assertTrue(result);
+        assertEquals(result.getUser().getIdentifier().toString(), userIdentifier);
     }
 
     @Test
@@ -98,9 +98,9 @@ public class UserDeviceServiceTests {
         assertNotNull(UUID.fromString(userIdentifier));
         assertNotNull(UUID.fromString(deviceIdentifier));
 
-        boolean result = userDeviceService.setUserActiveDevice(userIdentifier, deviceIdentifier);
+        UserDevice result = userDeviceService.setUserActiveDevice(userIdentifier, deviceIdentifier);
 
-        assertTrue(result);
+        assertEquals(result.getUser().getIdentifier().toString(), userIdentifier);
 
         UserDevice userDevice = userDeviceService.getUserDevice(userIdentifier);
 
