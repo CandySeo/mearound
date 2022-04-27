@@ -19,7 +19,6 @@ import com.candyseo.mearound.model.entity.device.DeviceEntity;
 import com.candyseo.mearound.model.entity.device.SensorEntity;
 import com.candyseo.mearound.model.mapper.DeviceMapper;
 import com.candyseo.mearound.repository.device.DeviceRepository;
-import com.candyseo.mearound.repository.device.DeviceSensorRepository;
 import com.candyseo.mearound.repository.device.SensorRepository;
 import com.candyseo.mearound.service.device.DeviceSensorServiceImpl;
 
