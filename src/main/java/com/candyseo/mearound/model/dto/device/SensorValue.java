@@ -11,7 +11,7 @@ import lombok.ToString;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class SensorValue {
+public class SensorValue implements Comparable<SensorValue> {
     
     private String sensorId;
 
@@ -20,5 +20,10 @@ public class SensorValue {
     private double value;
 
     private LocalDateTime registedDateTime;
+
+    @Override
+    public int compareTo(SensorValue o) {
+        return this.registedDateTime.isAfter(o.getRegistedDateTime()) ? 1 : -1;
+    }
 
 }

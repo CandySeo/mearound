@@ -1,5 +1,6 @@
 package com.candyseo.mearound.service.value;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,8 +21,10 @@ public class SensorValueServiceImpl implements SensorValueService {
 
     @Override
     public int appendAll(List<SensorValue> values) {
+
+        Collections.sort(values);
         return sensorValueRepository.saveAll(values.stream()
-                                                   .map(v -> new SensorValueEntity(v.getValue(), v.getRegistedDateTime()))
+                                                   .map(v -> new SensorValueEntity(v.getSensorId(), v.getValue(), v.getRegistedDateTime()))
                                                    .collect(Collectors.toList()))
                                     .size();
     }

@@ -6,6 +6,7 @@ import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
@@ -80,5 +81,15 @@ public class SensorValueServiceTests {
         List<SensorValue> find = sensorValueService.get(this.sensorId);
 
         assertEquals(0, find.size());
+    }
+
+    @Test
+    public void returnSortedList() {
+        List<SensorValueEntity> registed = this.values.stream()
+                                                      .map(v -> new SensorValueEntity(sensorId, 0L, v.getValue(), v.getRegistedDateTime()))
+                                                      .collect(Collectors.toList());
+        Collections.sort(registed);
+        
+        assertEquals(values.get(0).getValue(), registed.get(3).getValue());
     }
 }

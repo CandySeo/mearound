@@ -15,19 +15,16 @@ import com.candyseo.mearound.model.entity.key.SensorValueEntityKey;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 
 @Getter
 @ToString
 @NoArgsConstructor
-@RequiredArgsConstructor
 @AllArgsConstructor
 @Entity
 @Table(name = "sensor_values")
 @IdClass(value = SensorValueEntityKey.class)
-public class SensorValueEntity {
+public class SensorValueEntity implements Comparable<SensorValueEntity> {
     
     @Id
     @Column(name = "sensor_id", nullable = false, length = 36)
@@ -38,10 +35,21 @@ public class SensorValueEntity {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private long sequence;
 
-    @NonNull
+    @Column(nullable = false)
     private double value;
 
-    @NonNull
+    @Column(nullable = false)
     private LocalDateTime registedDateTime;
+
+    public SensorValueEntity(String sensorId, double value, LocalDateTime registedDateTime) {
+        this.sensorId = sensorId;
+        this.value = value;
+        this.registedDateTime = registedDateTime;
+    }
+
+    @Override
+    public int compareTo(SensorValueEntity o) {
+        return this.registedDateTime.isAfter(o.getRegistedDateTime()) ? 1 : -1;
+    }
 
 }
