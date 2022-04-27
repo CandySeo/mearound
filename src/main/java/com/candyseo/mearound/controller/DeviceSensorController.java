@@ -8,6 +8,7 @@ import com.candyseo.mearound.model.SensorType;
 import com.candyseo.mearound.model.dto.device.Device;
 import com.candyseo.mearound.model.dto.device.DeviceSensor;
 import com.candyseo.mearound.model.dto.device.Sensor;
+import com.candyseo.mearound.service.device.DeviceSensorService;
 
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,28 +26,29 @@ import lombok.extern.slf4j.Slf4j;
 public class DeviceSensorController {
 
     private static final String SENSORID_DELEMETER = ",";
+
+    private DeviceSensorService deviceSensorService;
+
+    public DeviceSensorController(DeviceSensorService deviceSensorService) {
+        this.deviceSensorService = deviceSensorService;
+    }
     
     @PostMapping(value="/", 
                 consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public DeviceSensor registDeviceSensor(@RequestBody DeviceSensor deviceSensor) {
+    public DeviceSensor registDeviceSensor( @PathVariable("deviceId") String deviceId,
+                                            @RequestBody DeviceSensor deviceSensor) {
 
         log.info("Request to regist: {}", deviceSensor);
 
-        return new DeviceSensor(new Device(deviceSensor.getDevice().getId(), 
-                                                        UUID.randomUUID().toString(), 
-                                                        "devicename1"), 
-                                deviceSensor.getSensors());
+        return deviceSensorService.regist(deviceId, deviceSensor.getSensors());
     }
     
-    @GetMapping(value="/{sensorIds}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public DeviceSensor getDeviceSensor(@PathVariable("deviceId") String deviceId,
-                                        @PathVariable("sensorIds") String sensorIds) {
+    @GetMapping(value="/", produces = MediaType.APPLICATION_JSON_VALUE)
+    public DeviceSensor getDeviceSensor(@PathVariable("deviceId") String deviceId) {
 
-        log.info("Request to get: deviceid[{}] sensorId[{}]", deviceId, sensorIds);
-        List<Sensor> sensors = new ArrayList<>();
-        sensors.add(new Sensor("SENSORID1", SensorType.TEMP));
-        
-        return new DeviceSensor(new Device("DEVICEID1", UUID.randomUUID().toString(), "DEVICENAME1"), sensors);
+        log.info("Request to get: deviceid[{}]", deviceId);
+                
+        return deviceSensorService.get(deviceId);
     }
 
 }

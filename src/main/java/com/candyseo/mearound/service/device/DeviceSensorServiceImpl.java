@@ -81,6 +81,15 @@ public class DeviceSensorServiceImpl implements DeviceSensorService {
                                                                     .map(s -> new Sensor(s.getIdentifier().toString(), SensorType.valueOf(s.getType())))
                                                                     .collect(Collectors.toList()));
     }
+    
+    @Override
+    public DeviceSensor get(String deviceId) {
+        DeviceEntity device = getValidDevice(deviceId);
+        return new DeviceSensor(deviceMapper.toDto(device), 
+                                sensorRepository.findByDevice(device).stream()
+                                                .map(s -> new Sensor(s.getIdentifier().toString(), SensorType.valueOf(s.getType())))
+                                                .collect(Collectors.toList()));
+    }
 
     @Override
     public void deleteAllByDevice(String deviceId) {

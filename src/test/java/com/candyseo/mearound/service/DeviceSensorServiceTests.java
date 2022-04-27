@@ -19,6 +19,7 @@ import com.candyseo.mearound.model.entity.device.DeviceEntity;
 import com.candyseo.mearound.model.entity.device.SensorEntity;
 import com.candyseo.mearound.model.mapper.DeviceMapper;
 import com.candyseo.mearound.repository.device.DeviceRepository;
+import com.candyseo.mearound.repository.device.DeviceSensorRepository;
 import com.candyseo.mearound.repository.device.SensorRepository;
 import com.candyseo.mearound.service.device.DeviceSensorServiceImpl;
 
@@ -79,12 +80,31 @@ public class DeviceSensorServiceTests {
     }
 
     @Test
-    public void throwDataNotFoundExceptionWhenUnregistedDevice() {
+    public void throwDataNotFoundExceptionWhenSaveWithUnregistedDevice() {
         List<Sensor> registSensors = this.sensors.stream().map(e -> new Sensor(null, SensorType.of(e.getType()))).collect(Collectors.toList());
         when(deviceRepository.findById(any(UUID.class))).thenReturn(Optional.empty());
 
         assertThrows(DataNotFoundException.class, () -> {
             deviceSensorService.regist(device.getId().toString(), registSensors);
+        });
+    }
+
+    @Test
+    public void returnDeviceSensorWhenGet() {
+        when(deviceRepository.findById(any(UUID.class))).thenReturn(Optional.of(device));
+        when(sensorRepository.findByDevice(any(DeviceEntity.class))).thenReturn(sensors);
+
+        DeviceSensor deviceSensor = deviceSensorService.get(device.getIdentifier().toString());
+
+        assertEquals(device.getIdentifier().toString(), deviceSensor.getDevice().getIdentifier());
+    }
+
+    @Test
+    public void throwDataNotFoundExceptionWhenGetWithUnregistedDevice() {
+        when(deviceRepository.findById(any(UUID.class))).thenReturn(Optional.empty());
+
+        assertThrows(DataNotFoundException.class, () -> {
+            deviceSensorService.get(device.getIdentifier().toString());
         });
     }
 

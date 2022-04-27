@@ -11,6 +11,8 @@ public interface DeviceSensorService {
 
     public DeviceSensor delete(String deviceId, List<Sensor> sensors);
 
+    public DeviceSensor get(String deviceId);
+
     public void deleteAllByDevice(String deviceId);
 
     public boolean isActive(String sensorId);
