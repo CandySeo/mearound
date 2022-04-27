@@ -1,6 +1,14 @@
 package com.candyseo.mearound.model.entity.device;
 
-import java.util.List;
+import java.io.Serializable;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.IdClass;
+import javax.persistence.Table;
+
+import com.candyseo.mearound.model.entity.key.DeviceSensorEntityKey;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,10 +19,17 @@ import lombok.ToString;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class DeviceSensorEntity {
-    
-    private DeviceEntity device;
+@Entity
+@Table(name = "device_sensors")
+@IdClass(DeviceSensorEntityKey.class)
+public class DeviceSensorEntity implements Serializable {
 
-    private List<SensorEntity> sensors;
+    @Id
+    @Column(name = "device_id", nullable = false, updatable = false, length = 36)
+    private String deviceId;
+
+    @Id
+    @Column(name = "sensor_id", nullable = false, updatable = false, length = 36)
+    private String sensorId;
 
 }

@@ -2,7 +2,9 @@ package com.candyseo.mearound.model;
 
 public enum SensorType {
     
-    TEMP(1, "온도", "℃", 10.0, 50.0);
+    TEMP(1, "온도", "℃", 10.0, 50.0),
+    PM10(2, "미세먼지", "µg/m2", 0, 1225),
+    PM25(3, "초미세먼지", "µg/m2", 0, 1225);
 
     private int order;
 
@@ -36,5 +38,9 @@ public enum SensorType {
 
     public boolean isValid(double value) {
         return (this.minimum <= value) && (value <= this.maximum);
+    }
+
+    public static SensorType of(String type) {
+        return valueOf(type);
     }
 }

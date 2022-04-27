@@ -1,16 +1,10 @@
 package com.candyseo.mearound.controller;
 
-import java.util.List;
-import java.util.UUID;
-
-import com.candyseo.mearound.model.dto.device.Device;
 import com.candyseo.mearound.model.dto.user.DeviceId;
-import com.candyseo.mearound.model.dto.user.User;
 import com.candyseo.mearound.model.dto.user.UserDevice;
 import com.candyseo.mearound.service.user.UserDeviceService;
 
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
