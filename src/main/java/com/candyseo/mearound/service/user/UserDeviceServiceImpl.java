@@ -86,18 +86,6 @@ public class UserDeviceServiceImpl implements UserDeviceService {
         } catch(Exception e) {
             throw new IllegalArgumentException(e);
         }
-
-        // return new UserDevice(user, activeDevice, devices);
-        // return makeUserDevice(userIdentifier, deviceIdentifier, userDevices.stream().map(u -> u.getDeviceId()).collect(Collectors.toSet()));
-    }
-
-    private UserDevice makeUserDevice(String userIdentifier, String activeDeviceIdentifier, Set<String> deviceIdentifiers) {
-
-        User user = userService.get(userIdentifier);
-        Device activeDevice = deviceService.get(activeDeviceIdentifier);
-        List<Device> devices = deviceService.findAll(deviceIdentifiers);
-
-        return new UserDevice(user, activeDevice, devices);
     }
 
     @Override
