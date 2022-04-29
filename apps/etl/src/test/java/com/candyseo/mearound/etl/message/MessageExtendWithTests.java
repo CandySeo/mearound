@@ -3,6 +3,9 @@ package com.candyseo.mearound.etl.message;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.List;
 
 import com.candyseo.mearound.etl.EtlApplication;
@@ -11,7 +14,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -33,6 +38,9 @@ public class MessageExtendWithTests {
     @Autowired
     private MessageSender messageSender;
 
+    @Value("${message.reader.template-path:data/template.txt}")
+    private String templatePath;
+
     @BeforeEach
     public void setUp() {
         this.messageSender.setMessageBuffer(this.messageBuffer);
@@ -44,10 +52,6 @@ public class MessageExtendWithTests {
         assertNotNull(context);
         assertNotNull(context.getBean(MessageBuffer.class));
         assertNotNull(context.getBean(MessageSender.class));
-
-        // for (String name : context.getBeanDefinitionNames()) {
-        //     System.out.println(">>>>> " + name);
-        // }
     }
 
     @Test
@@ -64,23 +68,23 @@ public class MessageExtendWithTests {
     }
 
     @Test
-    public void throwRuntimeExceptionWhenMessageReadTests() {
-        String filePath = getClass().getResource("messages_failed.txt").getPath();
-        messageReader.setFilePath(filePath);
+    public void throwRuntimeExceptionWhenMessageReadTests() throws IOException {
 
-        assertThrows(RuntimeException.class, () -> {
+        assertThrows(FileNotFoundException.class, () -> {
+            File file = new ClassPathResource("messages_failed.txt").getFile();
+            messageReader.setFile(file);
             messageReader.read();
             messageSender.send();
         });
     }
     
     @Test
-    public void messageReadTests() {
-        String filePath = getClass().getResource("messages.txt").getPath();
-        messageReader.setFilePath(filePath);
+    public void templateReadTests() throws IOException {
+        File file = new ClassPathResource(templatePath).getFile();
+        
+        messageReader.setFile(file);
 
         messageReader.read();
         messageSender.send();
     }
-
 }

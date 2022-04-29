@@ -1,14 +1,19 @@
 package com.candyseo.mearound.etl;
 
-import com.candyseo.mearound.etl.message.AmqpMessageQueue;
-import com.candyseo.mearound.etl.message.AmqpMessageSender;
+import java.io.File;
+import java.io.IOException;
+
 import com.candyseo.mearound.etl.message.ConcurrentMessageBuffer;
 import com.candyseo.mearound.etl.message.ConsoleMessageSender;
 import com.candyseo.mearound.etl.message.DataParsorPolicy;
+import com.candyseo.mearound.etl.message.FileMessageReader;
 import com.candyseo.mearound.etl.message.Message;
 import com.candyseo.mearound.etl.message.MessageBuffer;
+import com.candyseo.mearound.etl.message.MessageReader;
 import com.candyseo.mearound.etl.message.MessageSender;
-import com.candyseo.mearound.etl.message.StringToMessageParsorPolicy;
+import com.candyseo.mearound.etl.message.TemplateToMessageParsorPolicy;
+import com.candyseo.mearound.etl.message.amqp.AmqpMessageQueue;
+import com.candyseo.mearound.etl.message.amqp.AmqpMessageSender;
 
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
@@ -25,7 +30,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
+@EnableScheduling
 @EnableRabbit
 @Configuration
 @ComponentScan("com.candyseo.mearound.etl")
@@ -36,27 +44,45 @@ public class EtlApplication {
 		SpringApplication.run(EtlApplication.class, args);
 	}
 
+	@Value("${message.reader.template-path:data/template.txt}")
+	private String templatePath;
+
+	@Autowired
+	private MessageBuffer messageBuffer;
+
+	@Bean
+	public MessageReader messageReader() {
+		
+		FileMessageReader messageReader = new FileMessageReader(messageBuffer, dataParsorPolicy());
+		try {
+			messageReader.setFile(new ClassPathResource(templatePath).getFile());
+			return messageReader;
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return messageReader;
+	
+	}
+
 	@Bean
 	public DataParsorPolicy<Message, String> dataParsorPolicy() {
-		return new StringToMessageParsorPolicy();
+		return new TemplateToMessageParsorPolicy();
 	}
 
 	@Profile("test")
 	public static class testConfiguration {
 
-		@Autowired
-		private MessageBuffer messageBuffer;
-
 		@Bean
 		public MessageSender messageSender() {
 			ConsoleMessageSender messageSender = new ConsoleMessageSender();
-			messageSender.setMessageBuffer(messageBuffer);
+			messageSender.setMessageBuffer(messageBuffer());
 
 			return messageSender;
 		}
 
 		@Bean
-		public MessageBuffer messageBuffeR() {
+		public MessageBuffer messageBuffer() {
 			return new ConcurrentMessageBuffer();
 		}
 	}

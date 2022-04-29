@@ -1,7 +1,20 @@
 
 spring:
+  profiles:
+    active: test
+---
+spring:
   rabbitmq:
     host: localhost
     port: 5672
-    username: guest
-    password: guest
+    username: mearound
+    password: mear0und
+
+  task:
+    scheduling:
+      pool.size: 10
+      threadNamePrefix: DataSenderScheduler
+ 
+message:
+  reader:
+    template-path: "data/template.txt"

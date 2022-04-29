@@ -17,6 +17,8 @@ public class Message implements Serializable {
 
     private String value;
 
+    private String registedDateTime;
+
     public Message(String value) {
         this.value = value;
     }

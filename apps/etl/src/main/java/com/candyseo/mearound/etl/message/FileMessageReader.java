@@ -1,24 +1,34 @@
 package com.candyseo.mearound.etl.message;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
+import java.io.File;
 import java.io.FileReader;
-import java.io.IOException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Component
+@NoArgsConstructor
 public class FileMessageReader implements MessageReader {
 
     private MessageBuffer messageBuffer;
 
     private DataParsorPolicy<Message, String> dataParsorPolicy;
 
-    private String filePath;
+    private File file;
 
-    public void setFilePath(String filePath) {
-        this.filePath = filePath;
+    @Autowired
+    public FileMessageReader(MessageBuffer messageBuffer, DataParsorPolicy<Message, String> dataParsorPolicy) {
+        this.messageBuffer = messageBuffer;
+        this.dataParsorPolicy = dataParsorPolicy;
+    }
+
+    public void setFile(File file) {
+        this.file = file;
     }
 
     @Autowired
@@ -34,24 +44,22 @@ public class FileMessageReader implements MessageReader {
     @Override
     public void read() {
         
-        if (filePath == null) {
-            throw new RuntimeException("`filePath` must be not null. Set the location of the file to be read using the method `setFilePath(String filePath)`.");
+        if (file == null) {
+            throw new RuntimeException("No file information to read. " + 
+                                        "Set the location of the file to be read using the method `setFile(File file)`.");
         }
 
-        try {
-            this.readFile(filePath);
-        } catch (Exception e) {
-            throw new RuntimeException("Failed read file `" + filePath + "`.", e);
-        }
-    }
-
-    private void readFile(String filePath) throws FileNotFoundException, IOException {
-
-        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
             String line;
             while ((line = br.readLine()) != null) {
-                messageBuffer.appendMessage(dataParsorPolicy.parseString(line));
+                if (!line.startsWith("#")) {
+                    log.info("ReadLine: {}", line);
+                    messageBuffer.appendMessage(dataParsorPolicy.parseString(line));
+                }
             }
+        } catch(Exception e) {
+            throw new RuntimeException("Cannot read file. " + 
+                                        "Set the location of the file to be read using the method `setFile(File file)`.");
         }
     }
 }
