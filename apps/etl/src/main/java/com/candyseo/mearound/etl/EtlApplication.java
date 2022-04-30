@@ -1,6 +1,5 @@
 package com.candyseo.mearound.etl;
 
-import java.io.File;
 import java.io.IOException;
 
 import com.candyseo.mearound.etl.message.ConcurrentMessageBuffer;
@@ -32,9 +31,12 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @EnableScheduling
 @EnableRabbit
+@RestController
 @Configuration
 @ComponentScan("com.candyseo.mearound.etl")
 @SpringBootApplication
@@ -42,6 +44,11 @@ public class EtlApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(EtlApplication.class, args);
+	}
+
+	@RequestMapping("/")
+	public String hello() {
+		return "Hello! ETL service.";
 	}
 
 	@Value("${message.reader.template-path:data/template.txt}")
