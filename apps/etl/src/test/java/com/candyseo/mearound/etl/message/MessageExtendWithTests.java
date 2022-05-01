@@ -8,7 +8,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 
-import com.candyseo.mearound.etl.EtlApplication;
+import com.candyseo.mearound.etl.config.ApplicationConfig;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,7 +23,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ActiveProfiles("test")
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = EtlApplication.class)
+@ContextConfiguration(classes = ApplicationConfig.class)
 public class MessageExtendWithTests {
     
     @Autowired
