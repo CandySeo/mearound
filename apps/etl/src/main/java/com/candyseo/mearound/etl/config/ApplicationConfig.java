@@ -14,8 +14,12 @@ import com.candyseo.mearound.etl.message.MessageBuffer;
 import com.candyseo.mearound.etl.message.MessageReader;
 import com.candyseo.mearound.etl.message.MessageSender;
 import com.candyseo.mearound.etl.message.TemplateToMessageParsorPolicy;
+import com.candyseo.mearound.etl.message.amqp.AmqpMessageConverter;
 import com.candyseo.mearound.etl.message.amqp.AmqpMessageQueue;
 import com.candyseo.mearound.etl.message.amqp.AmqpMessageSender;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
@@ -24,7 +28,7 @@ import org.springframework.amqp.rabbit.annotation.EnableRabbit;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -35,6 +39,9 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.util.FileCopyUtils;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @EnableScheduling
 @EnableRabbit
 @Configuration
@@ -45,12 +52,18 @@ public class ApplicationConfig {
     @Value("${message.reader.template-path:data/template.txt}")
 	private String templatePath;
 
-	@Autowired
-	private MessageBuffer messageBuffer;
+	@Bean
+	public ObjectMapper objectMapper() {
+		ObjectMapper objectMapper = new ObjectMapper();
+		objectMapper.registerModule(new JavaTimeModule());
+        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+
+		return objectMapper;
+	}
 
 	@Bean
-	public MessageReader messageReader() throws IOException {
-		
+	public MessageReader messageReader(MessageBuffer messageBuffer) throws IOException {
+		log.info("templatePath: {}", templatePath);
 		FileMessageReader messageReader = new FileMessageReader(messageBuffer, dataParsorPolicy());
 		File template = File.createTempFile("template", ".txt");
 		try (InputStream inputStream = new ClassPathResource(templatePath).getInputStream()) {					
@@ -121,10 +134,20 @@ public class ApplicationConfig {
 		}
 
 		@Bean
-		public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory) {
+		public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory, ObjectMapper objectMapper) {
 			RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
-			rabbitTemplate.setMessageConverter(new Jackson2JsonMessageConverter());
+			rabbitTemplate.setMessageConverter(amqpMessageConverter(objectMapper));
 			return rabbitTemplate;
+		}
+
+		@Bean
+		public AmqpMessageConverter amqpMessageConverter(ObjectMapper objectMapper) {
+			return new AmqpMessageConverter(messageConverter(), objectMapper);
+		}
+
+		@Bean
+		public MessageConverter messageConverter() {
+			return new Jackson2JsonMessageConverter();
 		}
 	}
 }

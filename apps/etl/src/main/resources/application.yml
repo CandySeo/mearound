@@ -29,4 +29,4 @@ spring:
  
 message:
   reader:
-    template-path: /data/template.txt
+    template-path: data/template.txt

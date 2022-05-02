@@ -43,11 +43,12 @@ public class FileMessageReader implements MessageReader {
     
     @Override
     public void read() {
-        
+
         if (file == null) {
             throw new RuntimeException("No file information to read. " + 
                                         "Set the location of the file to be read using the method `setFile(File file)`.");
         }
+        log.info("FilePath: {}", file.getAbsolutePath());
 
         try (BufferedReader br = new BufferedReader(new FileReader(file))) {
             String line;
