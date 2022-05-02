@@ -1,13 +1,6 @@
 package com.candyseo.mearound.controller;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-
-import com.candyseo.mearound.model.SensorType;
-import com.candyseo.mearound.model.dto.device.Device;
 import com.candyseo.mearound.model.dto.device.DeviceSensor;
-import com.candyseo.mearound.model.dto.device.Sensor;
 import com.candyseo.mearound.service.device.DeviceSensorService;
 
 import org.springframework.http.MediaType;
