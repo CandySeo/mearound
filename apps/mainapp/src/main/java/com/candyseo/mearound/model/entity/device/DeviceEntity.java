@@ -1,5 +1,6 @@
 package com.candyseo.mearound.model.entity.device;
 
+import java.io.Serializable;
 import java.util.UUID;
 
 import javax.persistence.Column;
@@ -29,7 +30,7 @@ import lombok.ToString;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Entity
 @Table(name = "devices")
-public class DeviceEntity extends BaseDateTimeEntity implements Persistable<UUID> {
+public class DeviceEntity extends BaseDateTimeEntity implements Persistable<UUID>, Serializable {
 
     @Id
     @Column(nullable = false, updatable = false, length = 36)
