@@ -11,6 +11,7 @@ import com.candyseo.mearound.model.entity.device.DeviceEntity;
 import com.candyseo.mearound.model.mapper.DeviceMapper;
 import com.candyseo.mearound.repository.device.DeviceRepository;
 
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,10 +22,16 @@ public class DeviceServiceImpl implements DeviceService {
 
     private DeviceMapper deviceMapper;
 
+    private RedisTemplate<String, DeviceEntity> redisTemplate;
+
     public DeviceServiceImpl(DeviceRepository deviceRepository,
                              DeviceMapper deviceMapper) {
         this.deviceRepository = deviceRepository;
         this.deviceMapper = deviceMapper;
+    }
+
+    public void setRedisTemplate(RedisTemplate<String, DeviceEntity> redisTemplate) {
+        this.redisTemplate = redisTemplate;
     }
 
     @Override
@@ -35,6 +42,13 @@ public class DeviceServiceImpl implements DeviceService {
         }
 
         DeviceEntity registed = deviceRepository.save(deviceMapper.toEntity(device));
+
+        if (redisTemplate != null) {
+            String deviceId = registed.getDeviceId();
+            this.redisTemplate.opsForHash().put(deviceId, "identifier", device.getIdentifier().toString());
+            this.redisTemplate.opsForHash().put(deviceId, "entity", device);
+        }
+
         return registed.getIdentifier().toString();
     }
 
