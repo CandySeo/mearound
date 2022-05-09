@@ -21,6 +21,12 @@ public class SensorValue implements Comparable<SensorValue> {
 
     private LocalDateTime registedDateTime;
 
+    public SensorValue(String sensorId, double value, LocalDateTime registedDateTime) {
+        this.sensorId = sensorId;
+        this.value = value;
+        this.registedDateTime = registedDateTime;
+    }
+
     @Override
     public int compareTo(SensorValue o) {
         return this.registedDateTime.isAfter(o.getRegistedDateTime()) ? 1 : -1;

@@ -1,5 +1,7 @@
 package com.candyseo.mearound.amqp;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -8,9 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import lombok.extern.slf4j.Slf4j;
-
-@Slf4j
 @Component
 public class AmqpReceiver {
 
@@ -20,9 +19,22 @@ public class AmqpReceiver {
     @Autowired
     private ObjectMapper objectMapper;
 
+    private List<AmqpMessageHandler> handlers = new LinkedList<>();
+
+    public AmqpReceiver(ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
+    }
+
+    public void addMessageHandler(AmqpMessageHandler handler) {
+        this.handlers.add(handler);
+    }
+
     public void receiveMessage(Map<String, Object> map) {
         Message message = objectMapper.convertValue(map, Message.class);
-        log.info("Received message: {}", message);
+
+        for (AmqpMessageHandler handler: handlers) {
+            handler.handler(message);
+        }
     }
 
 }
