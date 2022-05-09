@@ -46,6 +46,13 @@ public class SensorValueRepositoryTests {
     }
 
     @Test
+    public void returnSensorValueWhenSave() {
+        SensorValueEntity registed = sensorValueRepository.save(values.get(0));
+
+        assertEquals(values.get(0).getValue(), registed.getValue());
+    }
+
+    @Test
     public void returnEmptyListWhenFindBySensorId() {
 
         List<SensorValueEntity> registed = sensorValueRepository.findBySensorId(sensorId);

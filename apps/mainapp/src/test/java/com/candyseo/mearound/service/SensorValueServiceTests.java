@@ -75,6 +75,16 @@ public class SensorValueServiceTests {
     }
 
     @Test
+    public void returnTrueWhenSave() {
+
+        SensorValue value = values.get(0);
+        SensorValueEntity registed = new SensorValueEntity(sensorId, 42L, value.getValue(), value.getRegistedDateTime());
+        when(sensorValueRepository.save(any(SensorValueEntity.class))).thenReturn(registed);
+
+        assertEquals(1, sensorValueService.append(value));        
+    }
+
+    @Test
     public void returnEmptyListWhenFindBySensorIdNotRegisted() {
         when(sensorValueRepository.findBySensorId(any(String.class))).thenReturn(List.of());
 

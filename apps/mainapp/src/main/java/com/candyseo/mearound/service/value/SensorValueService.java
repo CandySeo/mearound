@@ -8,5 +8,7 @@ public interface SensorValueService {
     
     int appendAll(List<SensorValue> values);
 
+    int append(SensorValue values);
+
     List<SensorValue> get(String sensorId);
 }

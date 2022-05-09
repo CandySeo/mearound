@@ -29,6 +29,16 @@ public class SensorValueServiceImpl implements SensorValueService {
                                     .size();
     }
 
+
+    public int append(SensorValue values) {
+        
+        SensorValueEntity registed = sensorValueRepository.save(
+            new SensorValueEntity(values.getSensorId(), values.getValue(), values.getRegistedDateTime())
+        );
+
+        return registed.getSequence() > 0L ? 1 : 0;
+    }
+
     @Override
     public List<SensorValue> get(String sensorId) {
         
